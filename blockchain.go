@@ -10,5 +10,4 @@ func init() {
 
 func main() {
 	log.Println("test")
-
 }
