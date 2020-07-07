@@ -9,7 +9,11 @@ import (
 	"time"
 )
 
-const MINING_DIFFICULTY = 3
+const (
+	MINING_DIFFICULTY = 3
+	MINING_SENDER = "THE BLOCKCHAIN"
+	MINING_REWARD = 1.0
+)
 
 type Block struct {
 	timestamp    int64
@@ -59,12 +63,14 @@ func (b *Block) Hash() [32]byte {
 type Blockchain struct {
 	transactionPool []*Transaction
 	chain           []*Block
+	blockchainAddress string //ブロックチェーンにマイニングしている人のアドレスを登録
 }
 
-func NewBlockchain() *Blockchain {
+func NewBlockchain(blockchainAddress string) *Blockchain {
 	b := &Block{}
 	bc := new(Blockchain)
 	bc.CreateBlock(0, b.Hash())
+	bc.blockchainAddress = blockchainAddress
 	return bc
 }
 
@@ -119,8 +125,13 @@ func (bc *Blockchain) ProofOfWork() int {
 
 	//ValidProofの返り値がtrueになるまで (!つけないとtrueになるので回らない)
 	for !bc.ValidProof(nonce, previousHash, transactions, MINING_DIFFICULTY){
-
+		nonce += 1
 	}
+	return nonce
+}
+
+func (bc *Blockchain) Mining() bool {
+	bc.AddTransaction()
 }
 
 type Transaction struct {
@@ -157,19 +168,20 @@ func init() {
 }
 
 func main() {
-
 	blockchain := NewBlockchain()
 	blockchain.Print()
 
 	blockchain.AddTransaction("A", "B", 1.0)
 	previousHash := blockchain.LastBlock().Hash()
-	blockchain.CreateBlock(5, previousHash) //前のブロックのハッシュ値
+	nonce := blockchain.ProofOfWork()
+	blockchain.CreateBlock(nonce, previousHash) //前のブロックのハッシュ値
 	blockchain.Print()
 
 	blockchain.AddTransaction("C", "D", 2.0)
 	blockchain.AddTransaction("X", "Y", 3.0)
 	previousHash = blockchain.LastBlock().Hash()
-	blockchain.CreateBlock(2, previousHash)
+	nonce = blockchain.ProofOfWork()
+	blockchain.CreateBlock(nonce, previousHash)
 	blockchain.Print()
 
 }
