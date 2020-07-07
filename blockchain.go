@@ -114,7 +114,13 @@ func (bc *Blockchain) ValidProof(nonce int, previousHash [32]byte, transactions 
 
 func (bc *Blockchain) ProofOfWork() int {
 	transactions := bc.CopyTransactionPool()
-	previousHash := bc.LastBlock().Hash() //bcの一番最後に入っている
+	previousHash := bc.LastBlock().Hash() //bcの一番最後に入っているhash
+	nonce := 0
+
+	//ValidProofの返り値がtrueになるまで (!つけないとtrueになるので回らない)
+	for !bc.ValidProof(nonce, previousHash, transactions, MINING_DIFFICULTY){
+
+	}
 }
 
 type Transaction struct {
