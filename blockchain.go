@@ -9,10 +9,12 @@ import (
 	"time"
 )
 
+const MINING_DIFFICULTY = 3
+
 type Block struct {
+	timestamp    int64
 	nonce        int
 	previousHash [32]byte
-	timestamp    int64
 	transactions []*Transaction
 }
 
@@ -51,7 +53,6 @@ func (b *Block) MarshalJSON() ([]byte, error) {
 
 func (b *Block) Hash() [32]byte {
 	m, _ := json.Marshal(b)
-	fmt.Println(m)
 	return sha256.Sum256([]byte(m))
 }
 
@@ -89,6 +90,31 @@ func (bc *Blockchain) Print() {
 func (bc *Blockchain) AddTransaction(sender string, recipient string, value float32){
 	t := NewTransaction(sender, recipient, value)
 	bc.transactionPool = append(bc.transactionPool, t)
+}
+
+//Pool内の情報を一旦コピーする
+func (bc *Blockchain) CopyTransactionPool() []*Transaction {
+	transactions := make([]*Transaction, 0)
+	for _, t := range bc.transactionPool {
+		transactions = append(transactions,
+			NewTransaction(t.senderBlockchainAddress,
+				           t.recipientBlockchainAddress,
+				           t.value))
+	}
+	return transactions
+}
+
+func (bc *Blockchain) ValidProof(nonce int, previousHash [32]byte, transactions []*Transaction, difficulty int) bool {
+	zeros := strings.Repeat("0", difficulty)
+	guessBlock := Block{0,nonce, previousHash, transactions}
+	guessHashStr := fmt.Sprintf("%x", guessBlock.Hash())
+
+	return guessHashStr[:difficulty] == zeros //先頭から3文字分
+}
+
+func (bc *Blockchain) ProofOfWork() int {
+	transactions := bc.CopyTransactionPool()
+	previousHash := bc.LastBlock().Hash() //bcの一番最後に入っている
 }
 
 type Transaction struct {
