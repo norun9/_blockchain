@@ -131,7 +131,12 @@ func (bc *Blockchain) ProofOfWork() int {
 }
 
 func (bc *Blockchain) Mining() bool {
-	bc.AddTransaction()
+	bc.AddTransaction(MINING_SENDER, bc.blockchainAddress, MINING_REWARD)
+	nonce := bc.ProofOfWork() //rewardが入った状態でProofofWorkをする
+	previousHash := bc.LastBlock().Hash()
+	bc.CreateBlock(nonce, previousHash)
+	log.Println("action=mining, status=success")
+	return true
 }
 
 type Transaction struct {
@@ -168,7 +173,9 @@ func init() {
 }
 
 func main() {
-	blockchain := NewBlockchain()
+	myBlockchainAddress := "my_blockchain_address"
+
+	blockchain := NewBlockchain(myBlockchainAddress)
 	blockchain.Print()
 
 	blockchain.AddTransaction("A", "B", 1.0)
