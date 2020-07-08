@@ -33,3 +33,26 @@ func (w *Wallet) PublicKey() *ecdsa.PublicKey {
 func (w *Wallet) PublicKeyStr() string {
 	return fmt.Sprintf("%x%x", w.publicKey.X.Bytes(), w.publicKey.Y.Bytes())
 }
+
+/*
+
+func main() {
+	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	if err != nil {
+		panic(err)
+	}
+
+	msg := "hello, world"
+	hash := sha256.Sum256([]byte(msg))
+
+	r, s, err := ecdsa.Sign(rand.Reader, privateKey, hash[:])
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("signature: (0x%x, 0x%x)\n", r, s)
+
+	valid := ecdsa.Verify(&privateKey.PublicKey, hash[:], r, s)
+	fmt.Println("signature verified:", valid)
+}
+
+ */
