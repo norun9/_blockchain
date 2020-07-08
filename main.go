@@ -1,6 +1,8 @@
 package main
 
 import (
+	"blockchain/wallet"
+	"fmt"
 	"log"
 )
 
@@ -9,4 +11,7 @@ func init() {
 }
 
 func main() {
+	w := wallet.NewWallet()
+	fmt.Println(w.PrivateKeyStr())
+	fmt.Println(w.PublicKeyStr())
 }
