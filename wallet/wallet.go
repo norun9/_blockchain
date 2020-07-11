@@ -112,7 +112,7 @@ func NewTransaction(privateKey *ecdsa.PrivateKey, publicKey *ecdsa.PublicKey,
 
 func (t *Transaction) GenerateSignature() *Signature {
 	m ,_ := json.Marshal(t)
-	h := sha256.Sum256([]byte(m))
+	h := sha256.Sum256([]byte(m)) //ハッシュを求められる
 	r, s, _ := ecdsa.Sign(rand.Reader, t.senderPrivateKey, h[:])
 	return &Signature{r, s}
 }
