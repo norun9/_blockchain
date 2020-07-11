@@ -8,13 +8,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
-	"golang.org/x/crypto/ripemd160"
 	"goblockchain/utils"
+	"golang.org/x/crypto/ripemd160"
 )
 
 type Wallet struct {
-	privateKey *ecdsa.PrivateKey
-	publicKey *ecdsa.PublicKey
+	privateKey        *ecdsa.PrivateKey
+	publicKey         *ecdsa.PublicKey
 	blockchainAddress string
 }
 
@@ -64,7 +64,7 @@ func NewWallet() *Wallet {
 
 	// 8. Add the 4 checksum bytes from 7 at the end of extended RIPEMD-160 hash from 4 (25 bytes).
 	dc8 := make([]byte, 25)
-	copy(dc8[:21], vd4[:]) //最初の21バイト分にvd4の全てをいれる
+	copy(dc8[:21], vd4[:])      //最初の21バイト分にvd4の全てをいれる
 	copy(dc8[21:], checkSum[:]) //残りの4バイト分にcheckSum
 
 	// 9. Convert the result from a byte string into base58.
@@ -92,11 +92,11 @@ func (w *Wallet) BlockchainAddress() string {
 }
 
 type Transaction struct {
-	senderPrivateKey *ecdsa.PrivateKey
-	senderPublicKey *ecdsa.PublicKey
-	senderBlockchainAddress string
+	senderPrivateKey           *ecdsa.PrivateKey
+	senderPublicKey            *ecdsa.PublicKey
+	senderBlockchainAddress    string
 	recipientBlockchainAddress string
-	value float32
+	value                      float32
 }
 
 func NewTransaction(privateKey *ecdsa.PrivateKey, publicKey *ecdsa.PublicKey,
@@ -111,21 +111,21 @@ func NewTransaction(privateKey *ecdsa.PrivateKey, publicKey *ecdsa.PublicKey,
 }
 
 func (t *Transaction) GenerateSignature() *utils.Signature {
-	m ,_ := json.Marshal(t)
+	m, _ := json.Marshal(t)
 	h := sha256.Sum256([]byte(m)) //ハッシュを求められる
 	r, s, _ := ecdsa.Sign(rand.Reader, t.senderPrivateKey, h[:])
 	return &utils.Signature{r, s}
 }
 
 func (t *Transaction) MarshalJSON() ([]byte, error) {
-	return json.Marshal(struct{
-		Sender string `json:"sender_blockchain_address"`
-		Recipient string `json:"recipient_blockchain_address"`
-		Value float32 `json:"value"`
+	return json.Marshal(struct {
+		Sender    string  `json:"sender_blockchain_address"`
+		Recipient string  `json:"recipient_blockchain_address"`
+		Value     float32 `json:"value"`
 	}{
-		Sender: t.senderBlockchainAddress,
+		Sender:    t.senderBlockchainAddress,
 		Recipient: t.recipientBlockchainAddress,
-		Value: t.value,
+		Value:     t.value,
 	})
 }
 
@@ -150,4 +150,4 @@ func main() {
 	fmt.Println("signature verified:", valid)
 }
 
- */
+*/
