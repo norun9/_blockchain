@@ -5,10 +5,10 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"goblockchain/utils"
 	"log"
 	"strings"
 	"time"
-	"goblockchain/utils"
 )
 
 const (
@@ -105,10 +105,10 @@ func (bc *Blockchain) AddTransaction(sender string, recipient string, value floa
 
 	if bc.VerifyTransactionSignature(senderPublicKey, s, t) {
 		/*
-		if bc.CalculateTotalAmount(sender) < value {
-			log.Println("ERROR: Not enough balance in a wallet")
-			return false
-		}
+			if bc.CalculateTotalAmount(sender) < value {
+				log.Println("ERROR: Not enough balance in a wallet")
+				return false
+			}
 		*/
 		bc.transactionPool = append(bc.transactionPool, t)
 		return true
@@ -160,7 +160,7 @@ func (bc *Blockchain) ProofOfWork() int {
 
 func (bc *Blockchain) Mining() bool {
 	bc.AddTransaction(MINING_SENDER, bc.blockchainAddress, MINING_REWARD, nil, nil) //報酬を与える時なのでnilで良い
-	nonce := bc.ProofOfWork() //rewardが入った状態でProofOfWorkをする
+	nonce := bc.ProofOfWork()                                                       //rewardが入った状態でProofOfWorkをする
 	previousHash := bc.LastBlock().Hash()
 	bc.CreateBlock(nonce, previousHash)
 	log.Println("action=mining, status=success")
